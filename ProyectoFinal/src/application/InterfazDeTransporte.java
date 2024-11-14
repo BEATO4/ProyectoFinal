@@ -60,7 +60,6 @@ public class InterfazDeTransporte extends Application {
         
         Button btnEliminarParada = new Button("Eliminar Parada");
         Button btnEliminarRuta = new Button("Eliminar Ruta");
-
         grid.add(btnEliminarParada, 0, 3);  
         grid.add(btnEliminarRuta, 1, 4);    
         
@@ -132,21 +131,22 @@ public class InterfazDeTransporte extends Application {
     }
 
     private void calcularRutaMasCorta() {
+        // Lógica para calcular la ruta más corta
+        String idInicio = paradas.get(0).getId();
+        String idFin = paradas.get(paradas.size() - 1).getId();
+        grafo.encontrarRutaMasCorta(idInicio, idFin);
         ChoiceDialog<Parada> dialogInicio = new ChoiceDialog<>(paradas.get(0), paradas);
         dialogInicio.setTitle("Calcular Ruta Más Corta");
         dialogInicio.setHeaderText("Seleccione la parada de inicio:");
         Optional<Parada> resultInicio = dialogInicio.showAndWait();
-
         ChoiceDialog<Parada> dialogFin = new ChoiceDialog<>(paradas.get(1), paradas);
         dialogFin.setTitle("Calcular Ruta Más Corta");
         dialogFin.setHeaderText("Seleccione la parada de destino:");
         Optional<Parada> resultFin = dialogFin.showAndWait();
-
         if (resultInicio.isPresent() && resultFin.isPresent()) {
             Parada inicio = resultInicio.get();
             Parada fin = resultFin.get();
             List<Parada> rutaCorta = grafo.encontrarRutaMasCorta(inicio.getId(), fin.getId());
-
             if (!rutaCorta.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ruta Más Corta");
@@ -171,7 +171,6 @@ public class InterfazDeTransporte extends Application {
             mostrarAlerta("Eliminar Parada", "Seleccione una parada para eliminar.");
         }
     }
-
     private void eliminarRuta(ListView<Ruta> listaRutas) {
         Ruta seleccionada = listaRutas.getSelectionModel().getSelectedItem();
         if (seleccionada != null) {
@@ -181,7 +180,6 @@ public class InterfazDeTransporte extends Application {
             mostrarAlerta("Eliminar Ruta", "Seleccione una ruta para eliminar.");
         }
     }
-
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING);
         alerta.setTitle(titulo);
@@ -189,20 +187,17 @@ public class InterfazDeTransporte extends Application {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-    
-    
+
     private void actualizarListaParadas(ListView<Parada> listaParadas) {
-        paradas.clear();
-        paradas.addAll(grafo.getListaParadas());
-        listaParadas.setItems(paradas);
+        ObservableList<Parada> nuevasParadas = FXCollections.observableArrayList(grafo.getListaParadas());
+        listaParadas.setItems(nuevasParadas);
     }
 
     private void actualizarListaRutas(ListView<Ruta> listaRutas) {
-        rutas.clear();
-        rutas.addAll(grafo.getListaRutas());
-        listaRutas.setItems(rutas);
+        ObservableList<Ruta> nuevasRutas = FXCollections.observableArrayList(grafo.getListaRutas());
+        listaRutas.setItems(nuevasRutas);
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

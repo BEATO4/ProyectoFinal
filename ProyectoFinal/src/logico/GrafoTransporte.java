@@ -4,6 +4,7 @@ import java.util.*;
 
 public class GrafoTransporte {
     private Map<String, Parada> paradas = new HashMap<>();
+    private List<Ruta> rutas = new ArrayList<>();
     private Map<Parada, List<Ruta>> adyacencias = new HashMap<>();
 
     // Método para agregar paradas y rutas
@@ -29,6 +30,11 @@ public class GrafoTransporte {
         Parada inicio = paradas.get(idInicio);
         Parada fin = paradas.get(idFin);
 
+        if (inicio == null || fin == null) {
+            System.err.println("Error: Parada de inicio o fin no encontrada.");
+            return Collections.emptyList();
+        }
+
         Map<Parada, Double> distancias = new HashMap<>();
         Map<Parada, Parada> predecesores = new HashMap<>();
         PriorityQueue<Parada> queue = new PriorityQueue<>(Comparator.comparing(distancias::get));
@@ -42,15 +48,22 @@ public class GrafoTransporte {
 
         while (!queue.isEmpty()) {
             Parada actual = queue.poll();
+            System.out.println("Evaluando parada actual: " + actual.getNombre());
+
             if (actual.equals(fin)) break;
 
-            for (Ruta ruta : adyacencias.get(actual)) {
+            List<Ruta> rutasAdyacentes = adyacencias.get(actual);
+            if (rutasAdyacentes == null) continue;
+
+            for (Ruta ruta : rutasAdyacentes) {
                 Parada vecino = ruta.getDestino();
                 double nuevaDistancia = distancias.get(actual) + ruta.getDistancia();
+
                 if (nuevaDistancia < distancias.get(vecino)) {
                     distancias.put(vecino, nuevaDistancia);
                     predecesores.put(vecino, actual);
                     queue.add(vecino);
+                    System.out.println("Actualizando distancia para " + vecino.getNombre() + ": " + nuevaDistancia);
                 }
             }
         }
@@ -60,6 +73,67 @@ public class GrafoTransporte {
             camino.add(parada);
         }
         Collections.reverse(camino);
+
+        if (camino.size() == 1 && !camino.get(0).equals(inicio)) {
+            System.err.println("No existe una ruta posible entre las paradas seleccionadas.");
+            return Collections.emptyList();
+        }
+
+        System.out.println("Ruta encontrada: ");
+        camino.forEach(p -> System.out.print(p.getNombre() + " -> "));
+        System.out.println("FIN");
+
         return camino;
     }
+
+    
+    public void agregarParada(Parada parada) {
+        if (!paradas.containsKey(parada.getId())) {
+            paradas.put(parada.getId(), parada);
+        } else {
+            System.out.println("La parada ya existe: " + parada.getNombre());
+        }
+    }
+
+
+    public void agregarRuta(Ruta ruta) {
+        // Evitar agregar la ruta si ya existe una igual entre origen y destino
+        List<Ruta> rutasOrigen = adyacencias.computeIfAbsent(ruta.getOrigen(), k -> new ArrayList<>());
+        boolean rutaYaExiste = rutasOrigen.stream().anyMatch(r -> r.getDestino().equals(ruta.getDestino()));
+        if (!rutaYaExiste) {
+            rutasOrigen.add(ruta);
+        }
+
+        // Agregar la ruta inversa si es bidireccional
+        List<Ruta> rutasDestino = adyacencias.computeIfAbsent(ruta.getDestino(), k -> new ArrayList<>());
+        boolean rutaInversaExiste = rutasDestino.stream().anyMatch(r -> r.getDestino().equals(ruta.getOrigen()));
+        if (!rutaInversaExiste) {
+            Ruta rutaInversa = new Ruta(ruta.getDestino(), ruta.getOrigen(), ruta.getDistancia(), ruta.getTiempo(), ruta.getCosto());
+            rutasDestino.add(rutaInversa);
+        }
+
+        // Imprimir adyacencias para verificación
+        System.out.println("Mapa de adyacencias:");
+        adyacencias.forEach((parada, rutas) -> {
+            System.out.print(parada.getNombre() + " -> ");
+            rutas.forEach(r -> System.out.print(r.getDestino().getNombre() + " "));
+            System.out.println();
+        });
+        
+    }
+
+
+
+    public List<Parada> getListaParadas() {
+        return new ArrayList<>(paradas.values());
+    }
+
+    public List<Ruta> getListaRutas() {
+        List<Ruta> listaDeRutas = new ArrayList<>();
+        for (List<Ruta> rutasParada : adyacencias.values()) {
+            listaDeRutas.addAll(rutasParada);
+        }
+        return listaDeRutas;
+    }
+
 }

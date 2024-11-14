@@ -4,10 +4,8 @@ import java.util.*;
 
 public class GrafoTransporte {
     private Map<String, Parada> paradas = new HashMap<>();
-    private List<Ruta> rutas = new ArrayList<>();
     private Map<Parada, List<Ruta>> adyacencias = new HashMap<>();
 
-    // Método para agregar paradas y rutas
 
     public void eliminarParada(Parada parada) {
         paradas.remove(parada.getId());
@@ -111,14 +109,6 @@ public class GrafoTransporte {
             Ruta rutaInversa = new Ruta(ruta.getDestino(), ruta.getOrigen(), ruta.getDistancia(), ruta.getTiempo(), ruta.getCosto());
             rutasDestino.add(rutaInversa);
         }
-
-        // Imprimir adyacencias para verificación
-        System.out.println("Mapa de adyacencias:");
-        adyacencias.forEach((parada, rutas) -> {
-            System.out.print(parada.getNombre() + " -> ");
-            rutas.forEach(r -> System.out.print(r.getDestino().getNombre() + " "));
-            System.out.println();
-        });
         
     }
 

@@ -15,13 +15,12 @@ import logico.Parada;
 import logico.Ruta;
 
 public class InterfazDeTransporte extends Application {
-	private ObservableList<Parada> paradas = FXCollections.observableArrayList();
+    private ObservableList<Parada> paradas = FXCollections.observableArrayList();
     private ObservableList<Ruta> rutas = FXCollections.observableArrayList();
     private GrafoTransporte grafo = new GrafoTransporte();
 
     @Override
     public void start(Stage primaryStage) {
-        // Crear componentes de la interfaz
         Label labelParadas = new Label("Paradas");
         ListView<Parada> listaParadas = new ListView<>();
 
@@ -32,6 +31,13 @@ public class InterfazDeTransporte extends Application {
         Button btnAgregarRuta = new Button("Agregar Ruta");
         Button btnCalcularRuta = new Button("Calcular Ruta");
 
+        Button btnEliminarParada = new Button("Eliminar Parada");
+        Button btnEliminarRuta = new Button("Eliminar Ruta");
+
+        // Botones para modificar paradas y rutas
+        Button btnModificarParada = new Button("Modificar Parada");
+        Button btnModificarRuta = new Button("Modificar Ruta");
+
         // Organizar componentes en un GridPane
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -41,11 +47,15 @@ public class InterfazDeTransporte extends Application {
         grid.add(labelParadas, 0, 0);
         grid.add(listaParadas, 0, 1);
         grid.add(btnAgregarParada, 0, 2);
+        grid.add(btnEliminarParada, 0, 3);
+        grid.add(btnModificarParada, 0, 4);
 
         grid.add(labelRutas, 1, 0);
         grid.add(listaRutas, 1, 1);
         grid.add(btnAgregarRuta, 1, 2);
         grid.add(btnCalcularRuta, 1, 3);
+        grid.add(btnEliminarRuta, 1, 4);
+        grid.add(btnModificarRuta, 1, 5);
 
         // Crear escena y establecer la ventana principal
         Scene scene = new Scene(grid, 600, 400);
@@ -53,18 +63,16 @@ public class InterfazDeTransporte extends Application {
         primaryStage.setTitle("Sistema de Gestión de Rutas de Transporte Público");
         primaryStage.show();
 
-        // Agregar funcionalidad a los botones
+        // Asignar eventos a los botones
         btnAgregarParada.setOnAction(event -> agregarParada(listaParadas));
         btnAgregarRuta.setOnAction(event -> agregarRuta(listaParadas, listaRutas));
         btnCalcularRuta.setOnAction(event -> calcularRutaMasCorta());
-        
-        Button btnEliminarParada = new Button("Eliminar Parada");
-        Button btnEliminarRuta = new Button("Eliminar Ruta");
-        grid.add(btnEliminarParada, 0, 3);  
-        grid.add(btnEliminarRuta, 1, 4);    
-        
         btnEliminarParada.setOnAction(event -> eliminarParada(listaParadas));
         btnEliminarRuta.setOnAction(event -> eliminarRuta(listaRutas));
+        
+        // Asignar eventos a los botones de modificación
+        btnModificarParada.setOnAction(event -> modificarParada(listaParadas));
+        btnModificarRuta.setOnAction(event -> modificarRuta(listaRutas));
     }
 
     private void agregarParada(ListView<Parada> listaParadas) {
@@ -130,9 +138,71 @@ public class InterfazDeTransporte extends Application {
         }
     }
 
+    private void modificarParada(ListView<Parada> listaParadas) {
+        Parada seleccionada = listaParadas.getSelectionModel().getSelectedItem();
+        if (seleccionada != null) {
+            TextInputDialog dialogNombre = new TextInputDialog(seleccionada.getNombre());
+            dialogNombre.setTitle("Modificar Parada");
+            dialogNombre.setHeaderText("Ingrese el nuevo nombre de la parada:");
+            Optional<String> resultNombre = dialogNombre.showAndWait();
+
+            TextInputDialog dialogLatitud = new TextInputDialog(String.valueOf(seleccionada.getLatitud()));
+            dialogLatitud.setTitle("Modificar Parada");
+            dialogLatitud.setHeaderText("Ingrese la nueva latitud de la parada:");
+            Optional<String> resultLatitud = dialogLatitud.showAndWait();
+
+            TextInputDialog dialogLongitud = new TextInputDialog(String.valueOf(seleccionada.getLongitud()));
+            dialogLongitud.setTitle("Modificar Parada");
+            dialogLongitud.setHeaderText("Ingrese la nueva longitud de la parada:");
+            Optional<String> resultLongitud = dialogLongitud.showAndWait();
+
+            if (resultNombre.isPresent() && resultLatitud.isPresent() && resultLongitud.isPresent()) {
+                seleccionada.setNombre(resultNombre.get());
+                seleccionada.setLatitud(Double.parseDouble(resultLatitud.get()));
+                seleccionada.setLongitud(Double.parseDouble(resultLongitud.get()));
+                
+                // Actualizar visualmente removiendo y agregando de nuevo
+                paradas.remove(seleccionada);
+                paradas.add(seleccionada);
+
+                actualizarListaParadas(listaParadas);
+            }
+        } else {
+            mostrarAlerta("Modificar Parada", "Seleccione una parada para modificar.");
+        }
+    }
+
+    private void modificarRuta(ListView<Ruta> listaRutas) {
+        Ruta seleccionada = listaRutas.getSelectionModel().getSelectedItem();
+        if (seleccionada != null) {
+            TextInputDialog dialogDistancia = new TextInputDialog(String.valueOf(seleccionada.getDistancia()));
+            dialogDistancia.setTitle("Modificar Ruta");
+            dialogDistancia.setHeaderText("Ingrese la nueva distancia de la ruta (en km):");
+            Optional<String> resultDistancia = dialogDistancia.showAndWait();
+
+            TextInputDialog dialogTiempo = new TextInputDialog(String.valueOf(seleccionada.getTiempo()));
+            dialogTiempo.setTitle("Modificar Ruta");
+            dialogTiempo.setHeaderText("Ingrese el nuevo tiempo de la ruta (en minutos):");
+            Optional<String> resultTiempo = dialogTiempo.showAndWait();
+
+            if (resultDistancia.isPresent() && resultTiempo.isPresent()) {
+                seleccionada.setDistancia(Double.parseDouble(resultDistancia.get()));
+                seleccionada.setTiempo(Integer.parseInt(resultTiempo.get()));
+                
+                // Actualizar visualmente removiendo y agregando de nuevo
+                rutas.remove(seleccionada);
+                rutas.add(seleccionada);
+
+                actualizarListaRutas(listaRutas);
+            }
+        } else {
+            mostrarAlerta("Modificar Ruta", "Seleccione una ruta para modificar.");
+        }
+    }
+
+
     private void calcularRutaMasCorta() {
-        // Lógica para calcular la ruta más corta
-        String idInicio = paradas.get(0).getId();
+    	String idInicio = paradas.get(0).getId();
         String idFin = paradas.get(paradas.size() - 1).getId();
         grafo.encontrarRutaMasCorta(idInicio, idFin);
         ChoiceDialog<Parada> dialogInicio = new ChoiceDialog<>(paradas.get(0), paradas);
@@ -161,7 +231,7 @@ public class InterfazDeTransporte extends Application {
             }
         }
     }
-    
+
     private void eliminarParada(ListView<Parada> listaParadas) {
         Parada seleccionada = listaParadas.getSelectionModel().getSelectedItem();
         if (seleccionada != null) {
@@ -171,6 +241,7 @@ public class InterfazDeTransporte extends Application {
             mostrarAlerta("Eliminar Parada", "Seleccione una parada para eliminar.");
         }
     }
+
     private void eliminarRuta(ListView<Ruta> listaRutas) {
         Ruta seleccionada = listaRutas.getSelectionModel().getSelectedItem();
         if (seleccionada != null) {
@@ -180,6 +251,7 @@ public class InterfazDeTransporte extends Application {
             mostrarAlerta("Eliminar Ruta", "Seleccione una ruta para eliminar.");
         }
     }
+
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING);
         alerta.setTitle(titulo);

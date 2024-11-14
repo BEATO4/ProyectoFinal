@@ -3,82 +3,63 @@ package logico;
 import java.util.*;
 
 public class GrafoTransporte {
-	private Map<String, Parada> paradas;
-    private Map<String, List<Ruta>> listaAdyacencia;
+    private Map<String, Parada> paradas = new HashMap<>();
+    private Map<Parada, List<Ruta>> adyacencias = new HashMap<>();
 
-    public GrafoTransporte() {
-        paradas = new HashMap<>();
-        listaAdyacencia = new HashMap<>();
-    }
+    // Método para agregar paradas y rutas
 
-    public void agregarParada(Parada parada) {
-        paradas.put(parada.getId(), parada);
-        listaAdyacencia.put(parada.getId(), new LinkedList<>());
-    }
+    public void eliminarParada(Parada parada) {
+        paradas.remove(parada.getId());
+        adyacencias.remove(parada);  // Elimina la parada del grafo
 
-    public void agregarRuta(Ruta ruta) {
-        String idOrigen = ruta.getOrigen().getId();
-        listaAdyacencia.get(idOrigen).add(ruta);
-    }
-
-    public List<Parada> getListaParadas() {
-        return new LinkedList<>(paradas.values());
-    }
-
-    public List<Ruta> getListaRutas() {
-        List<Ruta> listaRutas = new LinkedList<>();
-        for (List<Ruta> rutasDeParada : listaAdyacencia.values()) {
-            listaRutas.addAll(rutasDeParada);
+        // Elimina todas las rutas que apuntan a esta parada
+        for (List<Ruta> rutas : adyacencias.values()) {
+            rutas.removeIf(ruta -> ruta.getDestino().equals(parada) || ruta.getOrigen().equals(parada));
         }
-        return listaRutas;
     }
-
-    public List<Ruta> encontrarRutaMasCorta(String idInicio, String idFin) {
-        Map<String, Double> distancias = new HashMap<>();
-        Map<String, String> paradasPrevias = new HashMap<>();
-        PriorityQueue<String> cola = new PriorityQueue<>(
-                (a, b) -> Double.compare(distancias.get(a), distancias.get(b))
-        );
-
-        // Inicializar distancias
-        for (String idParada : paradas.keySet()) {
-            distancias.put(idParada, Double.POSITIVE_INFINITY);
+    
+    public void eliminarRuta(Ruta ruta) {
+        List<Ruta> rutasOrigen = adyacencias.get(ruta.getOrigen());
+        if (rutasOrigen != null) {
+            rutasOrigen.remove(ruta);
         }
-        distancias.put(idInicio, 0.0);
-        cola.add(idInicio);
+    }
+    
+    public List<Parada> encontrarRutaMasCorta(String idInicio, String idFin) {
+        Parada inicio = paradas.get(idInicio);
+        Parada fin = paradas.get(idFin);
 
-        while (!cola.isEmpty()) {
-            String idParadaActual = cola.poll();
-            if (idParadaActual.equals(idFin)) {
-                break;
-            }
-            for (Ruta ruta : listaAdyacencia.get(idParadaActual)) {
-                String idVecino = ruta.getDestino().getId();
-                double nuevaDistancia = distancias.get(idParadaActual) + ruta.getDistancia();
-                if (nuevaDistancia < distancias.get(idVecino)) {
-                    distancias.put(idVecino, nuevaDistancia);
-                    paradasPrevias.put(idVecino, idParadaActual);
-                    cola.add(idVecino);
+        Map<Parada, Double> distancias = new HashMap<>();
+        Map<Parada, Parada> predecesores = new HashMap<>();
+        PriorityQueue<Parada> queue = new PriorityQueue<>(Comparator.comparing(distancias::get));
+
+        for (Parada parada : paradas.values()) {
+            distancias.put(parada, Double.MAX_VALUE);
+            predecesores.put(parada, null);
+        }
+        distancias.put(inicio, 0.0);
+        queue.add(inicio);
+
+        while (!queue.isEmpty()) {
+            Parada actual = queue.poll();
+            if (actual.equals(fin)) break;
+
+            for (Ruta ruta : adyacencias.get(actual)) {
+                Parada vecino = ruta.getDestino();
+                double nuevaDistancia = distancias.get(actual) + ruta.getDistancia();
+                if (nuevaDistancia < distancias.get(vecino)) {
+                    distancias.put(vecino, nuevaDistancia);
+                    predecesores.put(vecino, actual);
+                    queue.add(vecino);
                 }
             }
         }
 
-        return reconstruirCamino(idInicio, idFin, paradasPrevias);
-    }
-
-    private List<Ruta> reconstruirCamino(String idInicio, String idFin, Map<String, String> paradasPrevias) {
-        List<Ruta> camino = new LinkedList<>();
-        String idActual = idFin;
-        while (paradasPrevias.containsKey(idActual)) {
-            String idPrevio = paradasPrevias.get(idActual);
-            for (Ruta ruta : listaAdyacencia.get(idPrevio)) {
-                if (ruta.getDestino().getId().equals(idActual)) {
-                    camino.add(0, ruta);
-                    break;
-                }
-            }
-            idActual = idPrevio;
+        List<Parada> camino = new ArrayList<>();
+        for (Parada parada = fin; parada != null; parada = predecesores.get(parada)) {
+            camino.add(parada);
         }
+        Collections.reverse(camino);
         return camino;
     }
 }

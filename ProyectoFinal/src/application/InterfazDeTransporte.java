@@ -57,6 +57,15 @@ public class InterfazDeTransporte extends Application {
         btnAgregarParada.setOnAction(event -> agregarParada(listaParadas));
         btnAgregarRuta.setOnAction(event -> agregarRuta(listaParadas, listaRutas));
         btnCalcularRuta.setOnAction(event -> calcularRutaMasCorta());
+        
+        Button btnEliminarParada = new Button("Eliminar Parada");
+        Button btnEliminarRuta = new Button("Eliminar Ruta");
+
+        grid.add(btnEliminarParada, 0, 3);  
+        grid.add(btnEliminarRuta, 1, 4);    
+        
+        btnEliminarParada.setOnAction(event -> eliminarParada(listaParadas));
+        btnEliminarRuta.setOnAction(event -> eliminarRuta(listaRutas));
     }
 
     private void agregarParada(ListView<Parada> listaParadas) {
@@ -123,10 +132,62 @@ public class InterfazDeTransporte extends Application {
     }
 
     private void calcularRutaMasCorta() {
-        // Lógica para calcular la ruta más corta
-        String idInicio = paradas.get(0).getId();
-        String idFin = paradas.get(paradas.size() - 1).getId();
-        grafo.encontrarRutaMasCorta(idInicio, idFin);
+        ChoiceDialog<Parada> dialogInicio = new ChoiceDialog<>(paradas.get(0), paradas);
+        dialogInicio.setTitle("Calcular Ruta Más Corta");
+        dialogInicio.setHeaderText("Seleccione la parada de inicio:");
+        Optional<Parada> resultInicio = dialogInicio.showAndWait();
+
+        ChoiceDialog<Parada> dialogFin = new ChoiceDialog<>(paradas.get(1), paradas);
+        dialogFin.setTitle("Calcular Ruta Más Corta");
+        dialogFin.setHeaderText("Seleccione la parada de destino:");
+        Optional<Parada> resultFin = dialogFin.showAndWait();
+
+        if (resultInicio.isPresent() && resultFin.isPresent()) {
+            Parada inicio = resultInicio.get();
+            Parada fin = resultFin.get();
+            List<Parada> rutaCorta = grafo.encontrarRutaMasCorta(inicio.getId(), fin.getId());
+
+            if (!rutaCorta.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ruta Más Corta");
+                alert.setHeaderText("Ruta desde " + inicio + " hasta " + fin);
+                StringBuilder rutaDetalles = new StringBuilder("Ruta: ");
+                for (Parada parada : rutaCorta) {
+                    rutaDetalles.append(parada).append(" -> ");
+                }
+                rutaDetalles.setLength(rutaDetalles.length() - 4);  // Eliminar el último " -> "
+                alert.setContentText(rutaDetalles.toString());
+                alert.showAndWait();
+            }
+        }
+    }
+    
+    private void eliminarParada(ListView<Parada> listaParadas) {
+        Parada seleccionada = listaParadas.getSelectionModel().getSelectedItem();
+        if (seleccionada != null) {
+            grafo.eliminarParada(seleccionada);
+            actualizarListaParadas(listaParadas);
+        } else {
+            mostrarAlerta("Eliminar Parada", "Seleccione una parada para eliminar.");
+        }
+    }
+
+    private void eliminarRuta(ListView<Ruta> listaRutas) {
+        Ruta seleccionada = listaRutas.getSelectionModel().getSelectedItem();
+        if (seleccionada != null) {
+            grafo.eliminarRuta(seleccionada);
+            actualizarListaRutas(listaRutas);
+        } else {
+            mostrarAlerta("Eliminar Ruta", "Seleccione una ruta para eliminar.");
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
     
     

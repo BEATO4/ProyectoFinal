@@ -5,10 +5,12 @@ public class Parada {
     private String nombre;
     private double latitud;
     private double longitud;
-    
+
+    // Constructor y otros métodos
+
     @Override
     public String toString() {
-        return nombre;  // Retornar solo el nombre de la parada para visualizar en la interfaz
+        return nombre;
     }
     
     public Parada(String id, String nombre, double latitud, double longitud) {

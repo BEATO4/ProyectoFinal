@@ -4,9 +4,10 @@ public class Ruta {
 	private Parada origen;
     private Parada destino;
     private double distancia;
-    private int tiempoViaje; // en minutos
-    private double tarifa;
-    
+    private int tiempo;
+    private double costo;
+
+
     @Override
     public String toString() {
         return origen.getNombre() + "-" + destino.getNombre();  // Mostrar ruta en el formato deseado

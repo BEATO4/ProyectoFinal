@@ -6,6 +6,11 @@ public class Parada {
     private double latitud;
     private double longitud;
     
+    @Override
+    public String toString() {
+        return nombre;  // Retornar solo el nombre de la parada para visualizar en la interfaz
+    }
+    
     public Parada(String id, String nombre, double latitud, double longitud) {
         this.id = id;
         this.nombre = nombre;

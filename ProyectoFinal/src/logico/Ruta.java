@@ -7,6 +7,11 @@ public class Ruta {
     private int tiempoViaje; // en minutos
     private double tarifa;
     
+    @Override
+    public String toString() {
+        return origen.getNombre() + "-" + destino.getNombre();  // Mostrar ruta en el formato deseado
+    }
+    
     public Ruta(Parada origen, Parada destino, double distancia, int tiempoViaje, double tarifa) {
         this.origen = origen;
         this.destino = destino;

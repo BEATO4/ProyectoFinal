@@ -37,12 +37,16 @@ public class InterfazDeTransporte extends Application {
         // Botones para modificar paradas y rutas
         Button btnModificarParada = new Button("Modificar Parada");
         Button btnModificarRuta = new Button("Modificar Ruta");
+        
+        //boton para mostrar el ui del grafo
+        Button btnMostrarGrafo = new Button("Mostrar Grafo");
+        
 
         // Organizar componentes en un GridPane
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 20, 20, 20));
+        grid.setPadding(new Insets(20, 20, 20, 20));        
 
         grid.add(labelParadas, 0, 0);
         grid.add(listaParadas, 0, 1);
@@ -56,6 +60,8 @@ public class InterfazDeTransporte extends Application {
         grid.add(btnCalcularRuta, 1, 3);
         grid.add(btnEliminarRuta, 1, 4);
         grid.add(btnModificarRuta, 1, 5);
+        grid.add(btnMostrarGrafo, 1, 6);
+        
 
         // Crear escena y establecer la ventana principal
         Scene scene = new Scene(grid, 600, 400);
@@ -73,6 +79,13 @@ public class InterfazDeTransporte extends Application {
         // Asignar eventos a los botones de modificación
         btnModificarParada.setOnAction(event -> modificarParada(listaParadas));
         btnModificarRuta.setOnAction(event -> modificarRuta(listaRutas));
+        
+        btnMostrarGrafo.setOnAction(event -> {
+    	VisualGraphUI visualGraph = new VisualGraphUI(grafo);
+    	Stage visualStage = new Stage();
+    	visualGraph.showGraph(visualStage);
+});
+        
     }
 
     private void agregarParada(ListView<Parada> listaParadas) {

@@ -1,8 +1,8 @@
 package logico;
 
-public class Ruta {
-	private Parada origen;
-	private Parada destino;
+public class Arista {
+	private Nodo origen;
+	private Nodo destino;
     private double distancia;
     private int tiempo;
     private double costo;
@@ -13,7 +13,7 @@ public class Ruta {
         return origen.getNombre() + "-" + destino.getNombre();  // Mostrar ruta en el formato deseado
     }
     
-    public Ruta(Parada origen, Parada destino, double distancia, int tiempo, double costo) {
+    public Arista(Nodo origen, Nodo destino, double distancia, int tiempo, double costo) {
         this.origen = origen;
         this.destino = destino;
         this.distancia = distancia;
@@ -22,17 +22,17 @@ public class Ruta {
     }
     
     // Getters y setters
-    public Parada getOrigen() { return origen; }
-    public Parada getDestino() { return destino; }
+    public Nodo getOrigen() { return origen; }
+    public Nodo getDestino() { return destino; }
     public double getDistancia() { return distancia; }
     public int getTiempo() { return tiempo; }
     public double getCosto() { return costo; }
     
-    public void setOrigen(Parada origen) {
+    public void setOrigen(Nodo origen) {
 		this.origen = origen;
 	}
 
-	public void setDestino(Parada destino) {
+	public void setDestino(Nodo destino) {
 		this.destino = destino;
 	}
 

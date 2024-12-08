@@ -1,6 +1,6 @@
 package logico;
 
-public class Parada {
+public class Nodo {
 	private String id;
     private String nombre;
     private double latitud;
@@ -11,7 +11,7 @@ public class Parada {
         return nombre;
     }
     
-    public Parada(String id, String nombre, double latitud, double longitud) {
+    public Nodo(String id, String nombre, double latitud, double longitud) {
         this.id = id;
         this.nombre = nombre;
         this.latitud = latitud;
@@ -39,4 +39,6 @@ public class Parada {
 	public void setLongitud(double longitud) {
 		this.longitud = longitud;
 	}
+
+
 }

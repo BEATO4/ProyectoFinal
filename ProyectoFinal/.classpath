@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
+	<classpathentry kind="lib" path="C:/Users/DELL/Downloads/gson-2.11.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

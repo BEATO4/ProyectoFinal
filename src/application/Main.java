@@ -1,24 +1,42 @@
 package application;
-import com.google.gson.JsonSyntaxException;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.stage.Stage;
-import logico.*;
-import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
-import java.io.Reader;
-import java.util.*;
-import java.util.stream.Collectors;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import logico.Arista;
+import logico.Grafo;
+import logico.Nodo;
+import logico.SimuladorTrafico;
 
 public class Main extends Application {
 
@@ -83,8 +101,13 @@ public class Main extends Application {
 		// Botón para seleccionar nodos
 		btnSeleccionarNodos.setOnAction(event -> {
 			mostrarMensaje("Haz clic en los nodos para seleccionar inicio y fin.");
+			
+			// Reiniciar nodos seleccionados al momento de hacer clic en este botón
+		    nodoInicio = null;
+		    nodoFin = null;
+		    
 			canvas.setOnMouseClicked(null);
-
+		    
 			for (Circle nodo : nodos) {
 				nodo.setOnMouseClicked(e -> {
 					if (nodoInicio == null) {

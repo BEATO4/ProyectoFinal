@@ -1,0 +1,165 @@
+/* application.css */
+
+/* Global Styling */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f4f4f4;
+}
+
+/* Control Panel Styling */
+.vbox {
+    -fx-background-color: #2c3e50; /* Fondo más oscuro para el panel */
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-text-align: center;
+    -fx-padding: 8px 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0.0, 0, 1);
+    -fx-cursor: hand;
+    -fx-min-width: 180px; /* Asegura el mismo ancho mínimo */
+    -fx-max-width: 180px; /* Limita el ancho máximo */
+    -fx-pref-width: 180px; /* Establece el ancho preferido */
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0.0, 0, 2);
+}
+
+.button:pressed {
+    -fx-background-color: #21618c;
+    -fx-effect: none;
+}
+
+/* Canvas Styling */
+.canvas {
+    -fx-background-color: #D3D3D3;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+/* ComboBox Styling */
+.combo-box {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-pref-width: 180px;
+    -fx-min-width: 180px;
+    -fx-max-width: 180px;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+.combo-box .arrow {
+    -fx-background-color: white;
+}
+
+.combo-box .list-view {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+}
+
+/* Scroll Bar Styling */
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: #ecf0f1;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #95a5a6;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+/* Nodes (Circles) Custom Styling */
+.node {
+    -fx-fill: #3498db;
+    -fx-stroke: #2c3e50;
+    -fx-stroke-width: 2px;
+}
+
+.node:hover {
+    -fx-fill: #2980b9;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.node-selected {
+    -fx-fill: #008000;
+    -fx-stroke: #2c3e50;
+    -fx-stroke-width: 2px;
+}
+
+.node-finish {
+    -fx-fill: yellow;
+    -fx-stroke: orange;
+    -fx-stroke-width: 3px;
+}
+
+/* Route Lines Styling */
+.route-line {
+    -fx-stroke: #2ecc71;
+    -fx-stroke-width: 3px;
+}
+
+.route-line-selected {
+    -fx-stroke: #e74c3c;
+    -fx-stroke-width: 4px;
+    -fx-stroke-dash-array: 10 10;
+}
+
+.route-line-low {
+    -fx-stroke: green;
+    -fx-stroke-width: 3px;
+}
+
+.route-line-medium {
+    -fx-stroke: yellow;
+    -fx-stroke-width: 3px;
+}
+
+.route-line-high {
+    -fx-stroke: red;
+    -fx-stroke-width: 3px;
+}
+
+
+/* Message Area Styling */
+.message-area {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #2c3e50;
+    -fx-font-style: italic;
+    -fx-padding: 10px;
+}
+
+/* Responsive and Dynamic Styles */
+.primary-action {
+    -fx-background-color: #2ecc71;
+}
+
+.warning-action {
+    -fx-background-color: #e67e22;
+}
+
+.danger-action {
+    -fx-background-color: #e74c3c;
+}

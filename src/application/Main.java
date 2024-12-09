@@ -33,6 +33,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
 import logico.Arista;
 import logico.Grafo;
 import logico.Nodo;
@@ -68,7 +69,9 @@ public class Main extends Application {
 		Button btnAtras = new Button("Atrás");
 		Button btnGuardar = new Button("Guardar");
 
-
+		VBox panelParadas = new VBox();
+		panelParadas.setSpacing(10);
+		panelParadas.setPadding(new Insets(10));
 
 		// ComboBox para seleccionar el dato de las aristas
 		ComboBox<String> cbxDatosArista = new ComboBox<>();
@@ -522,68 +525,79 @@ public class Main extends Application {
 
 
 	private void calcularRutaCorta(String criterio) {
-		if (nodoInicio == null || nodoFin == null) {
-			mostrarMensaje("Debe seleccionar un nodo de inicio y uno de fin.");
-			return;
-		}
+	    if (nodoInicio == null || nodoFin == null) {
+	        mostrarMensaje("Debe seleccionar un nodo de inicio y uno de fin.");
+	        return;
+	    }
 
-		try {
-			String idInicio = (String) nodoInicio.getUserData();
-			String idFin = (String) nodoFin.getUserData();
+	    try {
+	        String idInicio = (String) nodoInicio.getUserData();
+	        String idFin = (String) nodoFin.getUserData();
 
-			Nodo inicio = grafo.getListaNodos().stream()
-					.filter(n -> n.getId().equals(idInicio))
-					.findFirst()
-					.orElse(null);
+	        Nodo inicio = grafo.getListaNodos().stream()
+	                .filter(n -> n.getId().equals(idInicio))
+	                .findFirst()
+	                .orElse(null);
 
-			Nodo fin = grafo.getListaNodos().stream()
-					.filter(n -> n.getId().equals(idFin))
-					.findFirst()
-					.orElse(null);
+	        Nodo fin = grafo.getListaNodos().stream()
+	                .filter(n -> n.getId().equals(idFin))
+	                .findFirst()
+	                .orElse(null);
 
-			if (inicio == null || fin == null) {
-				mostrarMensaje("No se encontraron los nodos seleccionados en el grafo.");
-				return;
-			}
+	        if (inicio == null || fin == null) {
+	            mostrarMensaje("No se encontraron los nodos seleccionados en el grafo.");
+	            return;
+	        }
 
-			List<Nodo> ruta = grafo.encontrarAristaMasCorta(inicio.getId(), fin.getId(), criterio, simuladorTrafico);
+	        List<Nodo> ruta = grafo.encontrarAristaMasCorta(inicio.getId(), fin.getId(), criterio, simuladorTrafico);
 
-			if (ruta.isEmpty()) {
-				mostrarMensaje("No se encontró una ruta entre los nodos seleccionados.");
-				return;
-			}
+	        if (ruta.isEmpty()) {
+	            mostrarMensaje("No se encontró una ruta entre los nodos seleccionados.");
+	            return;
+	        }
 
-			restablecerColores();
+	        // Mostrar los nombres de las paradas
+	        StringBuilder nombresParadas = new StringBuilder("Ruta más corta: ");
+	        for (Nodo nodo : ruta) {
+	            nombresParadas.append(nodo.getNombre()).append(" -> ");
+	        }
+	        // Eliminar la última flecha
+	        nombresParadas.setLength(nombresParadas.length() - 4);
 
-			for (int i = 0; i < ruta.size() - 1; i++) {
-				Nodo origen = ruta.get(i);
-				Nodo destino = ruta.get(i + 1);
+	        mostrarMensaje(nombresParadas.toString());
 
-				Line lineaRuta = aristas.stream()
-						.filter(line -> conectaNodos(line, origen, destino))
-						.findFirst()
-						.orElse(null);
+	        restablecerColores();
 
-				if (lineaRuta != null) {
-					lineaRuta.setStroke(Color.RED);
-				}
-			}
+	        for (int i = 0; i < ruta.size() - 1; i++) {
+	            Nodo origen = ruta.get(i);
+	            Nodo destino = ruta.get(i + 1);
 
-			for (Nodo nodo : ruta) {
-				Circle nodoVisual = nodos.stream()
-						.filter(circle -> circle.getUserData().equals(nodo.getId()))
-						.findFirst()
-						.orElse(null);
+	            Line lineaRuta = aristas.stream()
+	                    .filter(line -> conectaNodos(line, origen, destino))
+	                    .findFirst()
+	                    .orElse(null);
 
-				if (nodoVisual != null) {
-					nodoVisual.setFill(Color.ORANGE);
-				}
-			}
+	            if (lineaRuta != null) {
+	                lineaRuta.setStroke(Color.RED);
+	            }
+	        }
 
-		} catch (Exception e) {
-			mostrarMensaje("Error al calcular la ruta: " + e.getMessage());
-		}
+	        for (Nodo nodo : ruta) {
+	            Circle nodoVisual = nodos.stream()
+	                    .filter(circle -> circle.getUserData().equals(nodo.getId()))
+	                    .findFirst()
+	                    .orElse(null);
+
+	            if (nodoVisual != null) {
+	                nodoVisual.setFill(Color.ORANGE);
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        mostrarMensaje("Error al calcular la ruta: " + e.getMessage());
+	    }
 	}
+
 
 
 
